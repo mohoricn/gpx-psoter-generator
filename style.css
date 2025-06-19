@@ -38,3 +38,27 @@ svg {
   margin: auto;
   display: block;
 }
+
+
+#posterArea {
+  position: relative; /* Fix for absolute children */
+  ...
+}
+#nameOut, #infoOut {
+  position: absolute;
+  left: 50px;
+  color: #444;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+#nameOut {
+  bottom: 80px;
+  font-size: 36px;
+}
+#infoOut {
+  bottom: 40px;
+  font-size: 28px;
+  font-weight: 400;
+  color: #666;
+}
