@@ -1,4 +1,4 @@
-// Set A4 dimensions in pixels at 300 DPI (for export)
+//// Set A4 dimensions in pixels at 300 DPI (for export)
 const A4_WIDTH = 2480;
 const A4_HEIGHT = 3508;
 
@@ -109,4 +109,49 @@ function drawTrack(geojson) {
   const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
   polyline.setAttribute("points", points.join(" "));
   polyline.setAttribute("stroke", "#FF5500");
-  polyline.setAttribute("
+  polyline.setAttribute("stroke-width", "8");
+  polyline.setAttribute("fill", "none");
+  polyline.setAttribute("stroke-linecap", "round");
+  polyline.setAttribute("stroke-linejoin", "round");
+  svg.appendChild(polyline);
+
+  // Draw activity title top center
+  const title = document.getElementById("activityName").value;
+  if (title && title.trim().length > 0) {
+    const titleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    titleText.setAttribute("x", w / 2);
+    titleText.setAttribute("y", 100);
+    titleText.setAttribute("text-anchor", "middle");
+    titleText.setAttribute("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif");
+    titleText.setAttribute("font-size", "72");
+    titleText.setAttribute("fill", "#333333");
+    titleText.setAttribute("font-weight", "600");
+    titleText.textContent = title;
+    svg.appendChild(titleText);
+  }
+}
+
+// PNG Export
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  html2canvas(document.getElementById("posterArea"), { scale: 3 }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "poster.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});
+
+// PDF Export with jsPDF
+document.getElementById("downloadPdfBtn").addEventListener("click", async () => {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    unit: "pt",
+    format: [A4_WIDTH, A4_HEIGHT],
+  });
+
+  const canvas = await html2canvas(document.getElementById("posterArea"), { scale: 3 });
+  const imgData = canvas.toDataURL("image/png");
+
+  pdf.addImage(imgData, "PNG", 0, 0, A4_WIDTH, A4_HEIGHT);
+  pdf.save("poster.pdf");
+});
