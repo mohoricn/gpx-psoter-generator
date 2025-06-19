@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPX Poster Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>GPX Poster Generator</h1>
+    <input type="file" id="gpxFile" accept=".gpx" />
+    <input type="text" id="athleteName" placeholder="Athlete Name" />
+    <input type="text" id="activityName" placeholder="Activity Name" />
+    <input type="date" id="activityDate" />
+    <input type="text" id="activityDistance" placeholder="Distance (e.g., 42.5 km)" />
+    <input type="text" id="activityDuration" placeholder="Duration (e.g., 2h 15m)" />
+    <button id="generateBtn">Generate Poster</button>
+    <div id="posterArea">
+      <svg id="routeMap" width="600" height="400"></svg>
+      <div id="activityDetails">
+        <h2 id="nameOut"></h2>
+        <p id="titleOut"></p>
+        <p id="infoOut"></p>
+      </div>
+    </div>
+    <button id="downloadBtn">Download as PNG</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/togeojson@0.16.0/togeojson.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
