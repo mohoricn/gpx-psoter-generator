@@ -1,94 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GPX Poster Generator</title>
-  <style>
-    body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      margin: 20px;
-      background: #f9fbfd;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: 600;
-    }
-    input, button {
-      font-size: 16px;
-      padding: 6px 10px;
-      margin-top: 4px;
-      width: 300px;
-      max-width: 90vw;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 20px;
-      cursor: pointer;
-      background-color: #FF5500;
-      border: none;
-      color: white;
-      font-weight: 700;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #e04a00;
-    }
-    #posterArea {
-      margin-top: 30px;
-      width: 496px; /* A4 width at 150 dpi for on-screen preview */
-      height: 701px; /* A4 height at 150 dpi */
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      border-radius: 6px;
-      overflow: hidden;
-      background: white;
-    }
-    svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+  <title>GPX Poster Webapp</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>GPX Poster Generator</h1>
-
-  <label for="athleteName">Athlete Name</label>
-  <input type="text" id="athleteName" placeholder="Your name" />
-
-  <label for="activityName">Activity Title</label>
-  <input type="text" id="activityName" placeholder="Ride or hike title" />
-
-  <label for="activityDate">Activity Date</label>
-  <input type="date" id="activityDate" />
-
-  <label for="activityDistance">Activity Distance (km)</label>
-  <input type="text" id="activityDistance" placeholder="e.g. 35.4 km" />
-
-  <label for="activityDuration">Activity Duration (hh:mm:ss)</label>
-  <input type="text" id="activityDuration" placeholder="e.g. 02:15:23" />
-
-  <label for="gpxFile">Upload GPX File</label>
-  <input type="file" id="gpxFile" accept=".gpx" />
-
-  <button id="generateBtn">Generate Poster</button>
-  <button id="downloadBtn">Download PNG</button>
-  <button id="downloadPdfBtn">Download PDF</button>
-
-  <div id="posterArea">
-    <svg id="routeMap" viewBox="0 0 2480 3508" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div style="position:absolute; bottom: 80px; left: 50px; font-size: 36px; font-weight: 600; color:#444;" id="nameOut"></div>
-    <div style="position:absolute; bottom: 40px; left: 50px; font-size: 28px; color:#666;" id="infoOut"></div>
+  <h1>GPX Poster Creator</h1>
+  <div id="inputArea">
+    <label>Athlete Name:<br />
+      <input type="text" id="athleteName" placeholder="John Doe" />
+    </label>
+    <label>Activity Title:<br />
+      <input type="text" id="activityName" placeholder="Sunday Ride" />
+    </label>
+    <label>Activity Date:<br />
+      <input type="date" id="activityDate" />
+    </label>
+    <label>Distance:<br />
+      <input type="text" id="activityDistance" placeholder="42 km" />
+    </label>
+    <label>Duration:<br />
+      <input type="text" id="activityDuration" placeholder="2h 15m" />
+    </label>
+    <label>Upload GPX File:<br />
+      <input type="file" id="gpxFile" accept=".gpx" />
+    </label>
+    <button id="generateBtn">Generate Poster</button>
+    <button id="downloadBtn">Download PNG</button>
+    <button id="downloadPdfBtn">Download PDF</button>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tmcw/togeojson@0.16.0/dist/togeojson.umd.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <div id="posterArea">
+    <svg id="routeMap"></svg>
+    <div id="textOverlay">
+      <h2 id="titleOut"></h2>
+      <h3 id="nameOut"></h3>
+      <p id="infoOut"></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tmcw/togeojson@0.16.0/togeojson.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="script.js"></script>
 </body>

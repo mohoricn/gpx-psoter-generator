@@ -1,64 +1,100 @@
+
 body {
-  font-family: sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 20px;
+  background: #fafafa;
+  color: #333;
+}
+
+h1 {
   text-align: center;
+  margin-bottom: 30px;
 }
 
-.container {
-  max-width: 700px;
-  margin: auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
+#inputArea {
+  max-width: 400px;
+  margin: 0 auto 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-input, button {
-  display: block;
-  width: 90%;
-  margin: 10px auto;
-  padding: 10px;
-  font-size: 1em;
-}
-
-#posterArea {
-  border: 2px solid #000;
-  margin-top: 20px;
-  padding: 20px;
-  background: #fff;
-}
-
-#activityDetails {
-  margin-top: 10px;
-}
-
-svg {
-  border: 1px solid #ccc;
-  margin: auto;
-  display: block;
-}
-
-
-#posterArea {
-  position: relative; /* Fix for absolute children */
-  ...
-}
-#nameOut, #infoOut {
-  position: absolute;
-  left: 50px;
-  color: #444;
+label {
   font-weight: 600;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="file"] {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 1rem;
+  margin-top: 5px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  background: #ff5500;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #e04800;
+}
+
+#posterArea {
+  position: relative;
+  width: 595px; /* A4 width in px at 72dpi */
+  height: 842px; /* A4 height in px at 72dpi */
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+#routeMap {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#textOverlay {
+  position: absolute;
+  top: 140px;
+  width: 100%;
+  text-align: center;
   pointer-events: none;
   user-select: none;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
-#nameOut {
-  bottom: 80px;
-  font-size: 36px;
+
+#textOverlay h2 {
+  font-size: 2.2rem;
+  margin: 0 0 10px 0;
+  color: #333;
+  font-weight: 700;
 }
-#infoOut {
-  bottom: 40px;
-  font-size: 28px;
-  font-weight: 400;
+
+#textOverlay h3 {
+  font-size: 1.4rem;
+  margin: 0 0 6px 0;
+  color: #555;
+  font-weight: 600;
+}
+
+#textOverlay p {
+  font-size: 1rem;
   color: #666;
+  margin: 0;
+  font-weight: 400;
 }

@@ -1,6 +1,9 @@
-//// Set A4 dimensions in pixels at 300 DPI (for export)
+
+// A4 at 300dpi in px (approx)
 const A4_WIDTH = 2480;
 const A4_HEIGHT = 3508;
+
+let currentGeojson = null;
 
 document.getElementById("generateBtn").addEventListener("click", () => {
   const name = document.getElementById("athleteName").value;
@@ -11,6 +14,10 @@ document.getElementById("generateBtn").addEventListener("click", () => {
 
   document.getElementById("nameOut").textContent = name;
   document.getElementById("infoOut").textContent = `${dist} | ${time} | ${date}`;
+
+  if (currentGeojson) {
+    drawTrack(currentGeojson, title);
+  }
 });
 
 document.getElementById("gpxFile").addEventListener("change", function () {
@@ -20,20 +27,21 @@ document.getElementById("gpxFile").addEventListener("change", function () {
   const reader = new FileReader();
   reader.onload = function (e) {
     const xml = new DOMParser().parseFromString(e.target.result, "text/xml");
-    const geojson = toGeoJSON.gpx(xml);
-    drawTrack(geojson);
+    currentGeojson = toGeoJSON.gpx(xml);
+    const title = document.getElementById("activityName").value;
+    drawTrack(currentGeojson, title);
   };
   reader.readAsText(file);
 });
 
-function drawTrack(geojson) {
+function drawTrack(geojson, title = "") {
   const svg = document.getElementById("routeMap");
   svg.innerHTML = "";
   svg.setAttribute("width", A4_WIDTH);
   svg.setAttribute("height", A4_HEIGHT);
   svg.setAttribute("viewBox", `0 0 ${A4_WIDTH} ${A4_HEIGHT}`);
 
-  // Add defs for radial gradient
+  // Gradient background
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
   const gradient = document.createElementNS("http://www.w3.org/2000/svg", "radialGradient");
   gradient.setAttribute("id", "bgGradient");
@@ -54,14 +62,13 @@ function drawTrack(geojson) {
   defs.appendChild(gradient);
   svg.appendChild(defs);
 
-  // Pastel gradient background
   const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   bg.setAttribute("width", "100%");
   bg.setAttribute("height", "100%");
   bg.setAttribute("fill", "url(#bgGradient)");
   svg.appendChild(bg);
 
-  // Light grey border frame inset by 50 px
+  // Frame border
   const frame = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   frame.setAttribute("x", "50");
   frame.setAttribute("y", "50");
@@ -115,17 +122,16 @@ function drawTrack(geojson) {
   polyline.setAttribute("stroke-linejoin", "round");
   svg.appendChild(polyline);
 
-  // Draw activity title top center
-  const title = document.getElementById("activityName").value;
+  // Activity title on top center
   if (title && title.trim().length > 0) {
     const titleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
     titleText.setAttribute("x", w / 2);
-    titleText.setAttribute("y", 100);
+    titleText.setAttribute("y", 150);
     titleText.setAttribute("text-anchor", "middle");
     titleText.setAttribute("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif");
-    titleText.setAttribute("font-size", "72");
+    titleText.setAttribute("font-weight", "700");
+    titleText.setAttribute("font-size", "64");
     titleText.setAttribute("fill", "#333333");
-    titleText.setAttribute("font-weight", "600");
     titleText.textContent = title;
     svg.appendChild(titleText);
   }
@@ -136,22 +142,18 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   html2canvas(document.getElementById("posterArea"), { scale: 3 }).then(canvas => {
     const link = document.createElement("a");
     link.download = "poster.png";
-    link.href = canvas.toDataURL("image/png");
+    link.href = canvas.toDataURL();
     link.click();
   });
 });
 
-// PDF Export with jsPDF
-document.getElementById("downloadPdfBtn").addEventListener("click", async () => {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({
-    unit: "pt",
-    format: [A4_WIDTH, A4_HEIGHT],
+// PDF Export
+document.getElementById("downloadPdfBtn").addEventListener("click", () => {
+  html2canvas(document.getElementById("posterArea"), { scale: 3 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    // A4 in points: 595 x 842, scale image accordingly
+    pdf.addImage(imgData, 'PNG', 0, 0, 595, 842);
+    pdf.save("poster.pdf");
   });
-
-  const canvas = await html2canvas(document.getElementById("posterArea"), { scale: 3 });
-  const imgData = canvas.toDataURL("image/png");
-
-  pdf.addImage(imgData, "PNG", 0, 0, A4_WIDTH, A4_HEIGHT);
-  pdf.save("poster.pdf");
 });
