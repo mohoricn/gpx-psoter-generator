@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPX Poster Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>GPX Poster Generator</h1>
+  <div class="form-container">
+    <label>Athlete Name</label>
+    <input type="text" id="athleteName" placeholder="e.g. John Doe" />
+    <label>Activity Title</label>
+    <input type="text" id="activityName" placeholder="e.g. Sunday Ride" />
+    <label>Activity Date</label>
+    <input type="date" id="activityDate" />
+    <label>Activity Distance (km)</label>
+    <input type="text" id="activityDistance" placeholder="e.g. 100" />
+    <label>Activity Duration (hh:mm:ss)</label>
+    <input type="text" id="activityDuration" placeholder="e.g. 3h45m" />
+    <label>Upload GPX File</label>
+    <input type="file" id="gpxFile" accept=".gpx" />
+    <button id="generateBtn">Generate Poster</button>
+    <button id="downloadBtn">Download PNG</button>
+    <button id="downloadPdfBtn">Download PDF</button>
+  </div>
+  <div id="posterArea" class="poster">
+    <svg id="routeMap"></svg>
+    <div class="info-text">
+      <h2 id="titleOut"></h2>
+      <p id="nameOut"></p>
+      <p id="infoOut"></p>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toGeoJSON/0.16.0/togeojson.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
