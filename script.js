@@ -1,86 +1,49 @@
+document.getElementById('gpxFile').addEventListener('change', handleFileSelect);
+document.getElementById('downloadBtn').addEventListener('click', downloadPDF);
+document.getElementById('fontSelect').addEventListener('change', function () {
+  document.getElementById('poster').style.fontFamily = this.value;
+});
 
-document.getElementById("generateBtn").addEventListener("click", async () => {
-  const fileInput = document.getElementById("gpxFile");
-  if (!fileInput.files.length) {
-    alert("Please upload a GPX file.");
-    return;
-  }
-
+function handleFileSelect(evt) {
+  const file = evt.target.files[0];
   const reader = new FileReader();
-  reader.onload = function () {
+
+  reader.onload = function(e) {
     const parser = new DOMParser();
-    const xml = parser.parseFromString(reader.result, "application/xml");
-    const geojson = toGeoJSON.gpx(xml);
+    const xmlDoc = parser.parseFromString(e.target.result, "application/xml");
+    const trkpts = xmlDoc.getElementsByTagName("trkpt");
 
-    if (!geojson.features.length) {
-      alert("Invalid GPX file.");
-      return;
+    const svg = document.getElementById("track");
+    svg.innerHTML = "";
+
+    const points = [];
+    for (let pt of trkpts) {
+      const lat = parseFloat(pt.getAttribute("lat"));
+      const lon = parseFloat(pt.getAttribute("lon"));
+      points.push([lon, lat]);
     }
 
-    const coords = geojson.features[0].geometry.coordinates;
-    if (!coords.length) {
-      alert("No coordinates found in GPX.");
-      return;
-    }
+    if (points.length === 0) return;
 
-    // Scale and transform coordinates
-    const svg = document.getElementById("routeMap");
-    const padding = 200;
-    const width = 2480, height = 3508;
+    // Simple scaling
+    const scale = 10000;
+    const minX = Math.min(...points.map(p => p[0]));
+    const minY = Math.min(...points.map(p => p[1]));
+    const pathData = points.map(p => {
+      return [(p[0] - minX) * scale, (p[1] - minY) * -scale];
+    });
 
-    const xs = coords.map(c => c[0]);
-    const ys = coords.map(c => c[1]);
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
-
-    const scaleX = (width - 2 * padding) / (maxX - minX);
-    const scaleY = (height - 2 * padding) / (maxY - minY);
-    const scale = Math.min(scaleX, scaleY);
-
-    const offsetX = (width - (maxX - minX) * scale) / 2;
-    const offsetY = (height - (maxY - minY) * scale) / 2;
-
-    const pathData = coords.map(([x, y], i) => {
-      const px = (x - minX) * scale + offsetX;
-      const py = height - ((y - minY) * scale + offsetY);
-      return `${i === 0 ? "M" : "L"}${px},${py}`;
-    }).join(" ");
-
-    svg.setAttribute("width", width);
-    svg.setAttribute("height", height);
-    svg.innerHTML = `<path d="${pathData}" fill="none" stroke="#222" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-    // Add details
-    const name = document.getElementById("athleteName").value;
-    const title = document.getElementById("activityName").value;
-    const date = document.getElementById("activityDate").value;
-    const distance = document.getElementById("activityDistance").value;
-    const duration = document.getElementById("activityDuration").value;
-
-    document.getElementById("titleOut").textContent = title;
-    document.getElementById("nameOut").textContent = name;
-    document.getElementById("infoOut").textContent = `${distance} | ${duration} | ${date}`;
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", `M${pathData.map(p => p.join(',')).join(' L')}`);
+    path.setAttribute("stroke", "#000");
+    path.setAttribute("stroke-width", 2);
+    path.setAttribute("fill", "none");
+    svg.appendChild(path);
   };
-  reader.readAsText(fileInput.files[0]);
-});
 
-document.getElementById("downloadBtn").addEventListener("click", () => {
-  html2canvas(document.getElementById("posterArea")).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "poster.png";
-    link.href = canvas.toDataURL();
-    link.click();
-  });
-});
+  reader.readAsText(file);
+}
 
-document.getElementById("downloadPdfBtn").addEventListener("click", () => {
-  html2canvas(document.getElementById("posterArea")).then(canvas => {
-    const imgData = canvas.toDataURL("image/png");
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p", "px", [2480, 3508]);
-    pdf.addImage(imgData, "PNG", 0, 0, 2480, 3508);
-    pdf.save("poster.pdf");
-  });
-});
+function downloadPDF() {
+  window.print(); // basic export option
+}
